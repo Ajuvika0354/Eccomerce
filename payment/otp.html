@@ -1,271 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <title>otp</title>
-    <style>
-        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap");
-        *{
-            margin: 0;
-            padding: 0;
-            font-family: "Poppins",sans-serif;
-            box-sizing: border-box;
-        }
-        body{
-            background-color: #78c1f3;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .container{
-            background: #ffffff;
-            width: 400px;
-            border-radius: 5px;
-            padding: 25px;
-            text-align: center;
-            animation: fadInShow 0.3s;
-        }
-        @keyframes fadInShow {
-            0%{
-                opacity: 0;
-                transform: scale(0);
-            }
-            100%{
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        .form-group{
-            margin: 20px 0;
-            text-align: start;
-        }
-        .form-group input{
-            height: 50px;
-            width: 100%;
-            font-size: 15px;
-            padding: 15px;
-            border-radius: 5px;
-            outline: none;
-            border: 1px solid #a3a3a3;
-        }
-        button{
-            width: 100%;
-            height: 45px;
-            cursor: pointer;
-            font-size: 16px;
-            background: #78c1f3;
-            border-radius: 30px;
-            border: none;
-            color: #ffffff;
-            margin-bottom: 20px;
-        }
-        .otp-form{
-            display: block;
-            margin: 20px 0;
-        }
-        .otp-form p{
-            margin: 20px;
-            color: green;
+<meta charset="UTF-8">
+<title>OTP Verification</title>
 
-        }
-        .otp-group{
-            display: flex;
-            gap: 30px;
-            justify-content: center;
-            margin: 20px;
-
-        }
-        .otp-group input{
-            height: 50px;
-            width: 50px;
-            padding: 5px;
-            font-size: 25px;
-            text-align: center;
-            outline: none;
-            border: none;
-            border-bottom: 2px solid #a3a3a3;
-
-        }
-        input::-webkit-inner-spin-button,
-        input::-webkit-outer-spin-button{
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        img{
-            height: 150px;
-            margin: 15px;
-        }
-        button.disable{
-            opacity: 0.6;
-            pointer-events: none;
-            user-select: none;
-        }
-        .error-shake{
-            animation: shake 0.2s ease-in-out 0s 2;
-        }
-        @keyframes shake{
-            0%{
-                margin-left: 0rem;
-            }
-            25%{
-                margin-left: 0.5rem;
-            }
-            75%{
-                margin-left: -0.5rem;
-            }
-            100%{
-                margin-left: 0rem;
-            }
-        }
-
-
-    </style>
-</head>
-<body>
-    <div class="container step1">
-        <h2>OTP Verification</h2>
-        <br />
-        <h4>Enter your email address</h4>
-        <br />
-        <p>You will receive an email with a one time password</p>
-
-        <div class="form-group">
-            <input type="email" id="emailAddress" placeholder="Email Address" onkeyup="validateEmail(this.value)"/>
-        </div>
-        <button class="nextButton">Next &rarr;</button>
-    </div>
-
-    <div class="container step2">
-        <h2>OTP Verification</h2>
-        <br />
-        <h4>Enter one-time password</h4>
-        
-        <p>A one-time password has been sent to <span id="verifyEmail"></span></p>
-
-        <div class="otp-form">
-            <p>Enter 4 digit code we sent you via email to continue</p>
-            <div class="otp-group">
-                <input type="number" />
-                <input type="number" />
-                <input type="number" />
-                <input type="number" />
-            </div>
-            <p>
-                Not your email? Didn't receive the code?
-                <a href="javascript:void(0)"onclick="changeMyEmail()">Try Again</a>
-            </p>
-        </div>
-        <button class="verifyButton" onclick="openEndPage()">Verify</button>
-    </div>
-
-    <div class="container step3">
-        <h2>Congratulations</h2>
-        <!-- <img src="tick.png"/> -->
-        <h2>Thank You!! </h2>
-        <p>Your OTP Verification has been completed successfully</p>
-        <br>
-        <button onclick="window.location.href='end.html'">Done</button>
-        <!-- <p>Click and Buy</p>
-        <p>Online Shopping</p> -->
-
-        
-    </div>
-    <script>
-
-const step1 = document.querySelector(".step1"),
-      step2 = document.querySelector(".step2"),
-      step3 = document.querySelector(".step3"),
-      emailAddress = document.getElementById("emailAddress"),
-      verifyEmail = document.getElementById("verifyEmail"),
-      inputs = document.querySelectorAll(".otp-group input"),
-      nextButton = document.querySelector(".nextButton"),
-      verifyButton = document.querySelector(".verifyButton");
-
-let OTP = "";
-
-window.addEventListener("load", () => {
-    emailjs.init("DKgfMGUFjAXRKgo3U"); 
-    step2.style.display = "none";
-    step3.style.display = "none";
-    nextButton.classList.add("disable");
-    verifyButton.classList.add("disable");
-});
-
-const validateEmail = (email) => {
-    let re = /\S+@\S+\.\S+/; 
-    if (re.test(email)) {
-        nextButton.classList.remove("disable");
-    } else {
-        nextButton.classList.add("disable"); 
-    }
-};
-
-const generateOTP = () => {
-    return Math.floor(1000 + Math.random() * 9000);
-};
-
-inputs.forEach((input) => {
-    input.addEventListener("keyup", function(e) {
-        if (this.value.length >= 1) {
-            e.target.value = e.target.value.substr(0, 1);
-        }
-        if (inputs[0].value !== "" && inputs[1].value !== "" && inputs[2].value !== "" && inputs[3].value !== "") {
-            verifyButton.classList.remove("disable");
-        } else {
-            verifyButton.classList.add("disable");
-        }
-    });
-});
-
-const serviceID = "service_uxal55g"; 
-const templateId = "template_cvaixoe"; 
-
-nextButton.addEventListener("click", () => {
-    OTP = generateOTP();
-    nextButton.innerHTML = "&#9889; Sending...";
-    let templateParameter = {
-        from_name: "Click and Buy",
-        OTP: OTP,
-        message: "Please find out the attached file",
-        reply_to: emailAddress.value,
-    };
-    emailjs.send(serviceID, templateId, templateParameter).then((res) => {
-        console.log(res);
-        nextButton.innerHTML = "Next &rarr;";
-        step1.style.display = "none";
-        step2.style.display = "block";
-        step3.style.display = "none";
-    }, (err) => {
-        console.log(err);
-    });
-});
-
-verifyButton.addEventListener("click", () => {
-    let values = "";
-    inputs.forEach((input) => {
-        values += input.value;
-    });
-    if (OTP == values) {
-        step1.style.display = "none";
-        step2.style.display = "none";
-        step3.style.display = "block"; // Show success step
-    } else {
-        verifyButton.classList.add("error-shake");
-        setTimeout(() => {
-            verifyButton.classList.remove("error-shake");
-        }, 1000);
-    }
-});
-
-function changeMyEmail() {
-    step1.style.display = "block";
-    step2.style.display = "none";
-    step3.style.display = "none";
+<style>
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
 }
 
-    </script>
+body{
+  height: 100vh;
+  background: linear-gradient(135deg, #fbc2eb, #a6c1ee);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container{
+  background: #fff;
+  width: 360px;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+  text-align: center;
+}
+
+h2{
+  color: #333;
+  margin-bottom: 15px;
+}
+
+p{
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+input[type="email"]{
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+}
+
+.otp-group{
+  display: flex;
+  justify-content: space-between;
+  margin: 20px 0;
+}
+
+.otp-group input{
+  width: 50px;
+  height: 50px;
+  font-size: 22px;
+  text-align: center;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button{
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background: #6a5af9;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover{
+  background: #5848e5;
+}
+
+.step2,
+.step3{
+  display: none;
+}
+
+.success{
+  color: green;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- STEP 1 -->
+  <div class="step1">
+    <h2>Email Verification</h2>
+    <p>Enter your email to receive OTP</p>
+
+    <input type="email" id="emailAddress" placeholder="Enter your email">
+    <button class="nextButton">Send OTP</button>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="step2">
+    <h2>Enter OTP</h2>
+    <p>OTP sent to <b id="verifyEmail"></b></p>
+
+    <div class="otp-group">
+      <input maxlength="1">
+      <input maxlength="1">
+      <input maxlength="1">
+      <input maxlength="1">
+    </div>
+
+    <button class="verifyButton">Verify OTP</button>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="step3">
+    <h2 class="success">✅ Order Placed</h2>
+    <p>Redirecting to homepage...</p>
+  </div>
+
+</div>
+
+<script>
+let userEmail = "";
+
+const step1 = document.querySelector(".step1");
+const step2 = document.querySelector(".step2");
+const step3 = document.querySelector(".step3");
+
+const emailAddress = document.getElementById("emailAddress");
+const verifyEmail = document.getElementById("verifyEmail");
+const inputs = document.querySelectorAll(".otp-group input");
+
+const nextButton = document.querySelector(".nextButton");
+const verifyButton = document.querySelector(".verifyButton");
+
+// SEND OTP
+nextButton.addEventListener("click", async () => {
+  const email = emailAddress.value;
+  if (!email) return alert("Enter email");
+
+  const res = await fetch("http://localhost:5000/api/otp/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email })
+  });
+
+  const data = await res.json();
+  if (!res.ok) return alert(data.message);
+
+  userEmail = email;
+  verifyEmail.innerText = email;
+
+  step1.style.display = "none";
+  step2.style.display = "block";
+});
+
+// VERIFY OTP
+verifyButton.addEventListener("click", async () => {
+  let otp = "";
+  inputs.forEach(i => otp += i.value);
+
+  const res = await fetch("http://localhost:5000/api/otp/verify", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email: userEmail, otp })
+  });
+
+  const data = await res.json();
+  if (!res.ok) return alert(data.message);
+
+  step2.style.display = "none";
+  step3.style.display = "block";
+
+  setTimeout(() => {
+    window.location.href = "../Landingpage/index.html";
+  }, 1500);
+});
+</script>
+
 </body>
 </html>

@@ -23,7 +23,7 @@ document
         };
 
         // Send a POST request to the backend API
-        fetch('http://localhost:5000/api/register', { // Ensure this URL matches your backend endpoint
+        fetch('http://localhost:5000/api/auth/register', { // Ensure this URL matches your backend endpoint
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
